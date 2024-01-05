@@ -2,19 +2,74 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Profile {
+  id Int @id @default(autoincrement())
 
-    @@index([name])
+  userId String
+
+  firstName String
+  lastName  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Record    Record[]
+
+  @@index([userId])
+}
+
+model Record {
+  id Int @id @default(autoincrement())
+
+  userId String
+
+  educations  Education[]
+  experiences Experience[]
+
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Education {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String?
+  length      Int
+
+  record   Record @relation(fields: [recordId], references: [id])
+  recordId Int    @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recordId])
+}
+
+model Experience {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String?
+  length      Int
+
+  record   Record @relation(fields: [recordId], references: [id])
+  recordId Int    @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recordId])
 }
