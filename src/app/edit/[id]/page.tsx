@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs";
 import { api } from "~/trpc/server";
 import { notFound } from "next/navigation";
+import AddEditRecord from "~/app/_components/add-edit-record";
 
 export default async function Edit({
   params: { id },
@@ -17,8 +18,8 @@ export default async function Edit({
   if (!record) return notFound();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      {record.id}
+    <main className="justify-center">
+      <AddEditRecord record={record} />
     </main>
   );
 }
