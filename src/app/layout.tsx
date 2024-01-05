@@ -2,8 +2,14 @@ import "~/styles/globals.css";
 
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 
 import { TRPCReactProvider } from "~/trpc/react";
+
+import { ThemeProvider } from "~/app/_components/providers/theme";
+import { ThemeSwitcher } from "~/app/_components/theme-switcher";
+
+import { cn } from "./lib/utils";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,12 +28,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html>
+        <body
+          className={cn(
+            "bg-background min-h-screen font-sans antialiased",
+            inter.variable,
+          )}
+        >
+          <TRPCReactProvider cookies={cookies().toString()}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <SignedIn>
+                <div className="absolute right-0 m-3 flex">
+                  <div className="mr-3">
+                    <ThemeSwitcher />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <UserButton />
+                  </div>
+                </div>
+              </SignedIn>
+              {children}
+            </ThemeProvider>
+          </TRPCReactProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
